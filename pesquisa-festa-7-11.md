@@ -1,8 +1,8 @@
 # Pesquisa de intenção - Festa de 7/11 (Halloween ou Dia das Crianças)
 
-Condomínio Edifício Jamaica · sábado 7/11/2026 · salão A/B · 18h às 23h30
+Condomínio Edifício Jamaica · sábado 7/11/2026 · salão A/B · Halloween das 18h às 23h30 ou Dia das Crianças das 16h às 21h
 
-Arquivos: `pesquisa-festa-7-11.gs` (Apps Script que cria o Google Forms com planilha) e este documento (análise, instruções e plano B com enquetes do WhatsApp).
+Arquivos: `pesquisa-festa-7-11.gs` (Apps Script que cria o Google Forms com planilha), `contribuicao-7-11.html` e `contribuicao-7-11-Codigo.gs` (página do Pix e seu backend, para depois do resultado) e este documento (análise, instruções e plano B com enquetes do WhatsApp).
 
 ---
 
@@ -14,7 +14,7 @@ Arquivos: `pesquisa-festa-7-11.gs` (Apps Script que cria o Google Forms com plan
 - **Decoração sai mais barata depois do 31/10.** Lojas liquidam itens de Halloween de 1 a 3/11. Isso só funciona se a decisão já estiver tomada até lá.
 - **A programação é a mesma nos dois temas.** Pintura de rosto, gincana e bingo cabem igualmente nos dois. Na prática a pesquisa decide só decoração, playlist e fantasia. A mensagem deixa isso claro para ninguém achar que "Halloween" exclui as crianças.
 - **Resistência ao Halloween existe em condomínio.** Algumas famílias evitam o tema por motivo religioso. A pesquisa capta isso sem confronto: quem não curte vota em "Dia das Crianças" ou "Não vou". Se o Halloween vencer com minoria relevante no outro lado, vale anunciar "fantasia livre (terror, super-herói, princesa, o que quiser)" para incluir todo mundo.
-- **Horário.** 18h às 23h30 combina com Halloween (precisa escurecer). Se Dia das Crianças vencer, vale considerar 16h às 21h. Em qualquer caso, concentre a parte infantil no início: pintura de rosto na chegada, gincana às 19h30, bingo às 20h30, concurso de fantasia às 21h, depois a noite fica mais adulta.
+- **Horário por tema, já informado na pesquisa.** Halloween das 18h às 23h30 (precisa escurecer); Dia das Crianças mais cedo, das 16h às 21h. Assim família com criança pequena vota sabendo o que cada tema implica. Em qualquer caso, concentre a parte infantil no início: pintura de rosto na chegada, gincana às 19h30, bingo às 20h30, concurso de fantasia às 21h, depois a noite fica mais adulta.
 
 ### Crédito da Agostina e saldo de R$ 422,70
 
@@ -57,7 +57,7 @@ Arquivos: `pesquisa-festa-7-11.gs` (Apps Script que cria o Google Forms com plan
 ### Como a pesquisa está montada
 
 - **Opção principal: Google Forms ligado a uma planilha**, criado pelo script `pesquisa-festa-7-11.gs` (seção 2). Dá o dado por apartamento, soma adultos, créditos e crianças sozinho e tem aba Resumo pronta. É o mesmo caminho da página de contribuição de agosto, que já gravava em planilha.
-- **Plano B: enquetes nativas do WhatsApp** (seção 4). Menos atrito, mais respostas, mas sem contagem por apartamento nem crédito.
+- **Plano B: enquetes nativas do WhatsApp** (seção 5). Menos atrito, mais respostas, mas sem contagem por apartamento nem crédito.
 - **Ordem das perguntas:** dados, tema, valor, fantasia, quantidades (adultos, crédito, crianças), atrações, voluntários, comentário. As três primeiras decidem a festa; as quantidades dimensionam compra e caixa; o resto prioriza esforço.
 - **Quem marca "Não vou" pula a parte de valor e quantidades** e cai direto no comentário, onde pode dizer o motivo.
 - **Contagem por apartamento.** O formulário pede o número do apto e a aba Resumo aponta apartamentos que responderam mais de uma vez.
@@ -71,7 +71,7 @@ Arquivos: `pesquisa-festa-7-11.gs` (Apps Script que cria o Google Forms com plan
 | 12 ou 13/10 (seg/ter) | Conferir na planilha da Agostina quem pagou e não foi; pegar orçamento do espetinho; ajustar `precoComEspetinho` e `saldoAnterior` no script se precisar; rodar `criarPesquisa` e postar o link à noite (20h) |
 | 15/10 (qui) | Lembrete |
 | 18/10 (dom) | Último dia; o formulário fecha sozinho à meia-noite |
-| 19/10 (seg) | Rodar `textoResultado`, conferir os créditos declarados, anunciar no grupo e abrir contribuição pelo Pix (adaptar a página index.html com opção "tenho crédito da Agostina") |
+| 19/10 (seg) | Rodar `textoResultado`, conferir os créditos declarados, anunciar no grupo e abrir a contribuição pelo Pix: preencher o `CONFIG` de `contribuicao-7-11.html` (tema, valor, endpoint) e publicar (seção 4) |
 | 31/10 (sáb) | Prazo da contribuição, uma semana antes, como em agosto |
 | 1 a 3/11 | Comprar decoração de Halloween em liquidação (se vencer) |
 | 5 e 6/11 | Compras de comida e bebida; imprimir cartelas do bingo |
@@ -133,11 +133,13 @@ As fórmulas dependem da ordem das colunas da aba Respostas. Se você acrescenta
 ### Mensagem para o grupo (o script também gera no registro, já com o link)
 
 ```
-🎉 *Festa do Jamaica - sábado 7/11, salão A/B, 18h às 23h30*
+🎉 *Festa do Jamaica - sábado 7/11, salão A/B*
 
 Galera, antes de bater o martelo queremos ouvir vocês: *Halloween ou Dia das Crianças?*
 
 Montamos uma pesquisa rapidinha (1 minuto) com tema, valor, fantasia e quantas pessoas do seu apto iriam. É ela que vai definir a festa e as compras.
+
+Se der Halloween, a festa é das 18h às 23h30. Se der Dia das Crianças, começa mais cedo, das 16h às 21h.
 
 👉 [link do formulário]
 
@@ -157,34 +159,62 @@ Principalmente a parte de quantas pessoas vão, é ela que define as compras. E 
 
 ### Resultado (segunda 19/10)
 
-Rode `textoResultado` no Apps Script. Ele monta o texto com tema vencedor, valor, contagem de adultos (e quantos com crédito), crianças, número de apartamentos, famílias fantasiadas e o saldo da Agostina. Só falta colar o link do Pix.
+Rode `textoResultado` no Apps Script. Ele monta o texto com tema vencedor, horário correspondente, valor, contagem de adultos (e quantos com crédito), crianças, número de apartamentos, famílias fantasiadas e o saldo da Agostina. Só falta colar o link do Pix.
 
 ---
 
-## 3. Melhorias sugeridas (ainda não aplicadas)
+## 3. Melhorias: o que foi aplicado e o que ficou de fora
 
-1. **"Doar um prêmio pro bingo" na lista de quem topa ajudar.** Vinho, chocolate, brinquedo. Zera o custo dos prêmios e envolve quem não pode trabalhar na festa.
-2. **Cartela extra de bingo a R$ 5.** Primeira cartela grátis. Pequena receita que costuma pagar os prêmios. Anunciar só no resultado, não na pesquisa.
-3. **Travar "Apartamento" para número.** Evita "apto 101" e "101" contarem como dois apartamentos. Só se o prédio não tiver bloco ou letra na unidade.
-4. **Limite de crédito por apartamento.** Se a planilha de agosto mostrar muita gente que pagou e não foi, anunciar "até 2 créditos por apto" antes de abrir a pesquisa evita discussão depois.
-5. **Página do Pix com opção "tenho crédito da Agostina".** Adaptar o index.html com um contador a R$ 0 para crédito, assim quem tem crédito confirma presença sem pagar e a lista fica completa.
-6. **Horário mais cedo se Dia das Crianças vencer.** 16h às 21h. Deixar a pergunta de fora da pesquisa foi de propósito, para não dividir votos; decidir junto com o resultado.
+**Aplicadas**
+
+- **Horário por tema.** A pesquisa, a mensagem do grupo e o texto do resultado informam: Halloween das 18h às 23h30, Dia das Crianças das 16h às 21h. O script usa `horarioHalloween` e `horarioCriancas` no `CONFIG`.
+- **Página do Pix com crédito da Agostina.** Nova página `contribuicao-7-11.html` com a faixa "Crédito da Festa Agostina" a R$ 0, e backend `contribuicao-7-11-Codigo.gs` que grava a coluna de crédito na planilha. Detalhes na seção 4.
+
+**Descartadas por decisão** (ficam registradas caso mude de ideia): doar prêmio para o bingo na lista de ajuda; cartela extra de bingo a R$ 5; travar o campo Apartamento para número; limite de créditos por apartamento.
 
 ---
 
-## 4. Plano B: enquetes nativas do WhatsApp (sem planilha)
+## 4. Página de contribuição (Pix) para 7/11
+
+Arquivos: `contribuicao-7-11.html` (página, feita a partir da de agosto) e `contribuicao-7-11-Codigo.gs` (backend que grava na planilha). Fica pronta agora; só se publica depois do resultado da pesquisa.
+
+### O que mudou em relação à página de agosto
+
+- **Faixa "Crédito da Festa Agostina", grátis**, entre "13 anos ou mais" e "6 a 12 anos", com a explicação "pessoa de 13+ que pagou em agosto e não foi". O aviso no topo explica a regra e diz que a administração confere com a lista de agosto.
+- **Preços vêm do `CONFIG`** e a página escreve "Grátis" ou "R$ X por pessoa" sozinha. Padrão: R$ 40 para 13+, crédito 0, crianças 0. Se a pesquisa escolher espetinho, troque `c13` para 50. Se decidir meia de 6 a 12, ponha `c6: 20`.
+- **Tema define cores, nome e horário.** `CONFIG.tema` é `'halloween'` (roxo e laranja, "Halloween do Jamaica", 18h às 23h30) ou `'criancas'` (laranja e amarelo, "Festa das Crianças", 16h às 21h).
+- **Quem só tem crédito vê "nada a pagar, só confirmar"** e a confirmação não pede comprovante.
+- **O envio inclui o campo `credito`.** A planilha ganha as colunas "Crédito Agostina" e "Crédito conferido?" para a conferência.
+- Chave Pix, QR Code e WhatsApp da administração são os mesmos de agosto.
+
+### Como publicar no dia 19/10
+
+1. Crie uma planilha nova no Drive (ex.: "Festa 7/11 - Contribuições"). Nela, Extensões › Apps Script, cole `contribuicao-7-11-Codigo.gs` e salve.
+2. Implantar › Nova implantação › App da Web, executar como você, acesso "Qualquer pessoa". Copie a URL que termina em `/exec`.
+3. Em `contribuicao-7-11.html`, no bloco `CONFIG`: cole a URL em `endpoint`, ajuste `tema`, `precos` e, se mudar, `prazo`.
+4. Suba o arquivo no GitHub. Ele fica em `.../festa-jamaica/contribuicao-7-11.html`. Se preferir o link curto de sempre, renomeie para `index.html` (a página de agosto já cumpriu o papel).
+5. Teste uma confirmação com seu próprio apartamento e confira a linha na planilha. Depois apague a linha de teste.
+6. Para ver os totais, rode `totais` no Apps Script.
+
+### Conferência do crédito
+
+Cada linha com "Crédito Agostina" maior que zero deve ser comparada com a planilha de agosto: o apartamento pagou pelo menos esse número de adultos e eles não foram? Marque "Crédito conferido?" com sim ou não e, se não, avise o morador antes da festa.
+
+---
+
+## 5. Plano B: enquetes nativas do WhatsApp (sem planilha)
 
 Use só se o link do Forms tiver pouca adesão ou se preferir não pedir cadastro. Enquete nativa conta sozinha, mas não dá o número por apartamento nem registra crédito (quem tem crédito precisa avisar no privado).
 
 ### Mensagem 1 - contexto (postar primeiro e fixar)
 
 ```
-🎉 *Festa do Jamaica - sábado 7/11, salão A/B, 18h às 23h30*
+🎉 *Festa do Jamaica - sábado 7/11, salão A/B*
 
 Galera, antes de bater o martelo queremos ouvir vocês. A próxima festa será no sábado 7/11 e a pergunta principal é: *Halloween ou Dia das Crianças?*
 
 O que já está pensado (vale pros dois temas):
-• Sábado 7/11, das 18h às 23h30, no salão A/B
+• Sábado 7/11, no salão A/B. Halloween das 18h às 23h30; Dia das Crianças mais cedo, das 16h às 21h
 • Cardápio enxuto: salgadinhos, cachorro-quente, doces e bolo, com cerveja e drinks (refri e suco pra criançada)
 • Pintura de rosto, gincana e bingo
 • Playlist temática no som do salão
@@ -304,6 +334,7 @@ Lembrete: as enquetes da festa de 7/11 fecham domingo (18/10)! Quem ainda não v
 📊 *Resultado das enquetes da festa de 7/11*
 
 Tema: [🎃 Halloween / 🎈 Dia das Crianças] venceu com [X] votos contra [Y].
+Horário: das [18h às 23h30 / 16h às 21h].
 Valor: R$ [40/50] por pessoa de 13 anos ou mais. Criança até 12 não paga.
 Contagem até agora: [N] adultos ([N] com crédito da Agostina) e [N] crianças de [N] apartamentos.
 [Fantasia liberada e concurso confirmado! / Sem concurso de fantasia desta vez.]

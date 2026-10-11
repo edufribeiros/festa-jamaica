@@ -26,7 +26,8 @@ var CONFIG = {
   tituloForm: 'Festa do Jamaica 7/11 - Halloween ou Dia das Crianças?',
   tituloPlanilha: 'Pesquisa Festa 7/11 - Respostas',
   dataFesta: 'sábado 7/11',
-  horario: '18h às 23h30',
+  horarioHalloween: '18h às 23h30',
+  horarioCriancas: '16h às 21h', // se Dia das Crianças vencer, a festa começa mais cedo
   local: 'salão A/B',
   prazo: 'domingo 18/10',
   dataResultado: 'segunda 19/10',
@@ -150,7 +151,7 @@ function montarFormulario() {
   form.addSectionHeaderItem()
     .setTitle('2 · O tema')
     .setHelpText('Nos dois temas tem pintura de rosto, gincana e bingo. ' +
-                 'O que muda: decoração, playlist e, no Halloween, fantasia livre e concurso de fantasia.');
+                 'O que muda: decoração, playlist, horário e, no Halloween, fantasia livre e concurso de fantasia.');
   var tema = form.addMultipleChoiceItem()
     .setTitle('Qual tema você prefere pra festa de 7/11?')
     .setRequired(true);
@@ -218,7 +219,7 @@ function montarFormulario() {
 function descricaoForm() {
   return [
     'Antes de bater o martelo, queremos ouvir vocês. A próxima festa será no ' +
-      CONFIG.dataFesta + ', das ' + CONFIG.horario + ', no ' + CONFIG.local + '.',
+      CONFIG.dataFesta + ', no ' + CONFIG.local + '.',
     '',
     'O que já está pensado (vale pros dois temas):',
     '• Cardápio enxuto: salgadinhos, cachorro-quente, doces e bolo, com cerveja e drinks (refri e suco pra criançada)',
@@ -226,8 +227,8 @@ function descricaoForm() {
     '• Playlist temática no som do salão',
     '',
     'O que muda com o tema:',
-    '🎃 Halloween: decoração assustadora, fantasia livre e concurso de fantasia',
-    '🎈 Dia das Crianças: decoração colorida, foco nas brincadeiras, sem fantasia',
+    '🎃 Halloween: decoração assustadora, fantasia livre e concurso de fantasia. Das ' + CONFIG.horarioHalloween + '.',
+    '🎈 Dia das Crianças: decoração colorida, foco nas brincadeiras, sem fantasia. Mais cedo, das ' + CONFIG.horarioCriancas + '.',
     '',
     'A parte do bolso: R$ ' + CONFIG.precoSemEspetinho + ' por pessoa de 13 anos ou mais, criança até 12 não paga. ' +
       'Com espetinho na hora sobe pra R$ ' + CONFIG.precoComEspetinho + '.',
@@ -412,11 +413,13 @@ function reabrirPesquisa() {
 
 function mensagemWhatsApp(link) {
   return [
-    '🎉 *Festa do Jamaica - ' + CONFIG.dataFesta + ', ' + CONFIG.local + ', ' + CONFIG.horario + '*',
+    '🎉 *Festa do Jamaica - ' + CONFIG.dataFesta + ', ' + CONFIG.local + '*',
     '',
     'Galera, antes de bater o martelo queremos ouvir vocês: *Halloween ou Dia das Crianças?*',
     '',
     'Montamos uma pesquisa rapidinha (1 minuto) com tema, valor, fantasia e quantas pessoas do seu apto iriam. É ela que vai definir a festa e as compras.',
+    '',
+    'Se der Halloween, a festa é das ' + CONFIG.horarioHalloween + '. Se der Dia das Crianças, começa mais cedo, das ' + CONFIG.horarioCriancas + '.',
     '',
     '👉 ' + link,
     '',
@@ -460,6 +463,7 @@ function textoResultado() {
     '',
     'Tema: ' + tema[0].nome + ' venceu com ' + tema[0].votos + ' votos contra ' + tema[1].votos +
       ' (' + conta(3, OPCOES.tema[2]) + ' tanto faz).',
+    'Horário: das ' + (tema[0].nome === OPCOES.tema[0] ? CONFIG.horarioHalloween : CONFIG.horarioCriancas) + '.',
     'Valor: ' + valor[0].nome.split(' - ')[0] + ' por pessoa de 13 anos ou mais (' + valor[0].votos + ' x ' + valor[1].votos + '). Criança até 12 não paga.',
     'Contagem até agora: ' + adultos + ' adultos (' + credito + ' com crédito da Agostina) e ' + criancas + ' crianças, de ' + Object.keys(aptos).length + ' apartamentos.',
     'Fantasia: ' + fantasiados + ' famílias disseram que vão fantasiadas.',
