@@ -6,7 +6,8 @@
      1. Cria o Google Forms com todas as perguntas.
      2. Cria a planilha de respostas e liga o formulário a ela.
      3. Monta a aba "Resumo" com as contagens automáticas: tema, valor,
-        fantasia, pessoas, receita estimada, atrações, voluntários e comentários.
+        fantasia, pessoas, créditos da festa anterior, caixa estimado,
+        atrações, voluntários e comentários.
      4. Agenda o fechamento automático do formulário (CONFIG.fechamento).
      5. Mostra no registro de execução os links e a mensagem pronta pro WhatsApp.
 
@@ -31,6 +32,10 @@ var CONFIG = {
   dataResultado: 'segunda 19/10',
   prazoPix: 'sábado 31/10',
 
+  // Festa anterior: quem pagou e não foi tem crédito nesta; o que sobrou entra no caixa.
+  festaAnterior: 'Festa Agostina (23/08)',
+  saldoAnterior: 422.70,
+
   // Valores por pessoa de 13 anos ou mais. Criança até 12 não paga.
   precoSemEspetinho: 40,
   precoComEspetinho: 50,
@@ -51,7 +56,7 @@ var OPCOES = {
   ],
   valor: [
     'R$ ' + CONFIG.precoSemEspetinho + ' - salgadinhos, cachorro-quente, doces, bolo, cerveja e drinks',
-    'R$ ' + CONFIG.precoComEspetinho + ' - tudo isso + espetinho na hora com churrasqueiro'
+    'R$ ' + CONFIG.precoComEspetinho + ' - tudo isso + espetinho na hora'
   ],
   fantasia: [
     'Sim, a família toda',
@@ -62,14 +67,15 @@ var OPCOES = {
   atracoes: [
     'Concurso de fantasia',
     'Pintura de rosto',
-    'Cineminha pras crianças',
     'Gincana e brincadeiras',
+    'Bingo',
     'Playlist temática no som',
     'Nenhuma, comida e som já tá ótimo'
   ],
   ajudar: [
     'Pintura de rosto',
     'Gincana e brincadeiras',
+    'Bingo',
     'Som e playlist',
     'Decoração',
     'Churrasco / espetinho',
@@ -143,7 +149,7 @@ function montarFormulario() {
 
   form.addSectionHeaderItem()
     .setTitle('2 · O tema')
-    .setHelpText('Nos dois temas tem pintura de rosto, cineminha e gincana pras crianças. ' +
+    .setHelpText('Nos dois temas tem pintura de rosto, gincana e bingo. ' +
                  'O que muda: decoração, playlist e, no Halloween, fantasia livre e concurso de fantasia.');
   var tema = form.addMultipleChoiceItem()
     .setTitle('Qual tema você prefere pra festa de 7/11?')
@@ -163,9 +169,13 @@ function montarFormulario() {
     .setRequired(true);
   form.addTextItem()
     .setTitle('Quantas pessoas de 13 anos ou mais do seu apto iriam?')
-    .setHelpText('Digite só o número. São as pessoas que contribuem.')
+    .setHelpText('Digite só o número. Conte todas, inclusive quem tem crédito da ' + CONFIG.festaAnterior + '.')
     .setValidation(validacaoNumero())
     .setRequired(true);
+  form.addTextItem()
+    .setTitle('Dessas, quantas pagaram a ' + CONFIG.festaAnterior + ' e não foram?')
+    .setHelpText('Essas não pagam de novo. Deixe em branco ou 0 se nenhuma.')
+    .setValidation(validacaoNumero());
   form.addTextItem()
     .setTitle('Quantas crianças de 6 a 12 anos?')
     .setHelpText('Digite só o número (0 se nenhuma).')
@@ -212,7 +222,7 @@ function descricaoForm() {
     '',
     'O que já está pensado (vale pros dois temas):',
     '• Cardápio enxuto: salgadinhos, cachorro-quente, doces e bolo, com cerveja e drinks (refri e suco pra criançada)',
-    '• Pintura de rosto, cineminha e gincana pras crianças',
+    '• Pintura de rosto, gincana e bingo',
     '• Playlist temática no som do salão',
     '',
     'O que muda com o tema:',
@@ -220,7 +230,10 @@ function descricaoForm() {
     '🎈 Dia das Crianças: decoração colorida, foco nas brincadeiras, sem fantasia',
     '',
     'A parte do bolso: R$ ' + CONFIG.precoSemEspetinho + ' por pessoa de 13 anos ou mais, criança até 12 não paga. ' +
-      'Com espetinho na hora (churrasqueiro contratado) sobe pra R$ ' + CONFIG.precoComEspetinho + '.',
+      'Com espetinho na hora sobe pra R$ ' + CONFIG.precoComEspetinho + '.',
+    '',
+    'Quem pagou a ' + CONFIG.festaAnterior + ' e não pôde ir, vai nessa sem pagar: é só informar na pergunta de quantas pessoas. ' +
+      'E sobraram ' + reais(CONFIG.saldoAnterior) + ' da Agostina, que já entram no caixa dessa festa.',
     '',
     'Leva 1 minuto. Responda até ' + CONFIG.prazo + '. Resultado ' + CONFIG.dataResultado + ' no grupo.'
   ].join('\n');
@@ -270,7 +283,8 @@ function aguardarAbaRespostas(idPlanilha) {
 
 // Colunas da aba Respostas, na ordem das perguntas do formulário:
 // A carimbo · B apto · C nome · D tema · E valor · F fantasia · G adultos
-// H crianças 6-12 · I crianças 0-5 · J atrações · K ajudar · L comentários
+// H crédito da festa anterior · I crianças 6-12 · J crianças 0-5
+// K atrações · L ajudar · M comentários
 function montarResumo(aba, form, urlCurta) {
   var R = 'Respostas!';
   var linhas = [];
@@ -303,26 +317,38 @@ function montarResumo(aba, form, urlCurta) {
 
   secao('PESSOAS');
   var lAdultos = add('Adultos (13 anos ou mais)', soma('G'));
-  var l612 = add('Crianças de 6 a 12', soma('H'));
-  var l05 = add('Crianças de 0 a 5', soma('I'));
+  var lCredito = add('Com crédito da ' + CONFIG.festaAnterior + ' (não pagam)', soma('H'));
+  var lPagantes = add('Adultos pagantes', '=B' + lAdultos + '-B' + lCredito);
+  var l612 = add('Crianças de 6 a 12', soma('I'));
+  var l05 = add('Crianças de 0 a 5', soma('J'));
   add('Total de pessoas', '=B' + lAdultos + '+B' + l612 + '+B' + l05);
-  moeda.push(add('Receita a R$ ' + CONFIG.precoSemEspetinho + ' (criança grátis)', '=B' + lAdultos + '*' + CONFIG.precoSemEspetinho));
-  moeda.push(add('Receita a R$ ' + CONFIG.precoComEspetinho + ' (criança grátis)', '=B' + lAdultos + '*' + CONFIG.precoComEspetinho));
-  moeda.push(add('Receita a R$ ' + CONFIG.precoComEspetinho + ' + meia de R$ ' + CONFIG.precoMeia + ' (6 a 12)',
-      '=B' + lAdultos + '*' + CONFIG.precoComEspetinho + '+B' + l612 + '*' + CONFIG.precoMeia));
+  add('Quem declarou crédito (apto: quantos)',
+      '=IFERROR(TEXTJOIN(", ", TRUE, FILTER(' + R + 'B2:B & ": " & ' + R + 'H2:H, IFERROR(VALUE(' + R + 'H2:H), 0)>0)), "ninguém")');
+
+  secao('CAIXA');
+  var lSaldo = add('Saldo da ' + CONFIG.festaAnterior, CONFIG.saldoAnterior);
+  moeda.push(lSaldo);
+  moeda.push(add('Créditos a cobrir (crédito × R$ ' + CONFIG.precoSemEspetinho + ')', '=B' + lCredito + '*' + CONFIG.precoSemEspetinho));
+  var lRec40 = add('Contribuições a R$ ' + CONFIG.precoSemEspetinho + ' (pagantes)', '=B' + lPagantes + '*' + CONFIG.precoSemEspetinho);
+  moeda.push(lRec40);
+  var lRec50 = add('Contribuições a R$ ' + CONFIG.precoComEspetinho + ' (pagantes)', '=B' + lPagantes + '*' + CONFIG.precoComEspetinho);
+  moeda.push(lRec50);
+  moeda.push(add('Caixa a R$ ' + CONFIG.precoSemEspetinho + ' (contribuições + saldo)', '=B' + lRec40 + '+B' + lSaldo));
+  moeda.push(add('Caixa a R$ ' + CONFIG.precoComEspetinho + ' (contribuições + saldo)', '=B' + lRec50 + '+B' + lSaldo));
+  moeda.push(add('A mais se cobrar meia de R$ ' + CONFIG.precoMeia + ' (6 a 12)', '=B' + l612 + '*' + CONFIG.precoMeia));
 
   secao('ATRAÇÕES (votos)');
-  OPCOES.atracoes.forEach(function (o) { add(o, contaContem('J', o)); });
+  OPCOES.atracoes.forEach(function (o) { add(o, contaContem('K', o)); });
 
   secao('QUEM TOPA AJUDAR');
   OPCOES.ajudar.slice(0, -1).forEach(function (o) {
     add(o, '=IFERROR(TEXTJOIN(", ", TRUE, FILTER(' + R + 'C2:C & " (apto " & ' + R + 'B2:B & ")", ' +
-           'ISNUMBER(SEARCH("' + o + '", ' + R + 'K2:K)))), "ninguém ainda")');
+           'ISNUMBER(SEARCH("' + o + '", ' + R + 'L2:L)))), "ninguém ainda")');
   });
 
   secao('COMENTÁRIOS');
   add('Apto - nome: comentário',
-      '=IFERROR(TEXTJOIN(CHAR(10), TRUE, FILTER(' + R + 'B2:B & " - " & ' + R + 'C2:C & ": " & ' + R + 'L2:L, ' + R + 'L2:L<>"")), "nenhum")');
+      '=IFERROR(TEXTJOIN(CHAR(10), TRUE, FILTER(' + R + 'B2:B & " - " & ' + R + 'C2:C & ": " & ' + R + 'M2:M, ' + R + 'M2:M<>"")), "nenhum")');
 
   // Escreve rótulos e fórmulas
   for (var i = 0; i < linhas.length; i++) {
@@ -341,11 +367,18 @@ function montarResumo(aba, form, urlCurta) {
   aba.getRange(1, 1, linhas.length, 2).setVerticalAlignment('top').setWrap(true);
   secoes.forEach(function (l) { aba.getRange(l, 1, 1, 2).setFontWeight('bold').setBackground('#fef0d4'); });
   aba.getRange(1, 1).setFontSize(14);
-  moeda.forEach(function (l) { aba.getRange(l, 2).setNumberFormat('"R$ "#,##0'); });
+  moeda.forEach(function (l) { aba.getRange(l, 2).setNumberFormat('"R$ "#,##0.00'); });
 }
 
 function escapaCountif(texto) {
   return texto.replace(/[~*?]/g, function (c) { return '~' + c; });
+}
+
+function reais(n) {
+  var inteiro = Math.floor(n);
+  var centavos = Math.round((n - inteiro) * 100);
+  if (centavos === 100) { inteiro += 1; centavos = 0; }
+  return 'R$ ' + String(inteiro).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ',' + (centavos < 10 ? '0' : '') + centavos;
 }
 
 /* --------------------------- fechamento auto -------------------------- */
@@ -387,9 +420,12 @@ function mensagemWhatsApp(link) {
     '',
     '👉 ' + link,
     '',
+    'Duas notícias boas: quem pagou a ' + CONFIG.festaAnterior + ' e não pôde ir, vai nessa *sem pagar* (é só informar na pesquisa). ' +
+      'E sobraram *' + reais(CONFIG.saldoAnterior) + '* da Agostina, que já entram no caixa dessa.',
+    '',
     'Uma resposta por apartamento, até *' + CONFIG.prazo + '*. Resultado ' + CONFIG.dataResultado + ' aqui no grupo e aí abrimos a contribuição no Pix.',
     '',
-    'Quem topa ajudar (pintura de rosto, gincana, som, decoração) marca lá na pesquisa! 🙌'
+    'Quem topa ajudar (pintura de rosto, gincana, bingo, som, decoração) marca lá na pesquisa! 🙌'
   ].join('\n');
 }
 
@@ -400,6 +436,8 @@ function textoResultado() {
   var aba = ss.getSheetByName('Respostas');
   if (!aba) throw new Error('Aba "Respostas" não encontrada na planilha.');
 
+  // Índices das colunas (0 = A): 1 apto · 2 nome · 3 tema · 4 valor · 5 fantasia
+  // 6 adultos · 7 crédito · 8 crianças 6-12 · 9 crianças 0-5
   var dados = aba.getDataRange().getValues().slice(1).filter(function (l) { return String(l[1]).trim() !== ''; });
   function conta(col, valor) { return dados.filter(function (l) { return String(l[col]) === valor; }).length; }
   function soma(col) { return dados.reduce(function (t, l) { return t + (Number(l[col]) || 0); }, 0); }
@@ -413,7 +451,9 @@ function textoResultado() {
   var aptos = {};
   dados.forEach(function (l) { aptos[String(l[1]).trim().toLowerCase()] = true; });
   var fantasiados = conta(5, OPCOES.fantasia[0]) + conta(5, OPCOES.fantasia[1]);
-  var criancas = soma(7) + soma(8);
+  var adultos = soma(6);
+  var credito = soma(7);
+  var criancas = soma(8) + soma(9);
 
   var msg = [
     '📊 *Resultado da pesquisa da festa de 7/11*',
@@ -421,8 +461,9 @@ function textoResultado() {
     'Tema: ' + tema[0].nome + ' venceu com ' + tema[0].votos + ' votos contra ' + tema[1].votos +
       ' (' + conta(3, OPCOES.tema[2]) + ' tanto faz).',
     'Valor: ' + valor[0].nome.split(' - ')[0] + ' por pessoa de 13 anos ou mais (' + valor[0].votos + ' x ' + valor[1].votos + '). Criança até 12 não paga.',
-    'Contagem até agora: ' + soma(6) + ' adultos e ' + criancas + ' crianças, de ' + Object.keys(aptos).length + ' apartamentos.',
+    'Contagem até agora: ' + adultos + ' adultos (' + credito + ' com crédito da Agostina) e ' + criancas + ' crianças, de ' + Object.keys(aptos).length + ' apartamentos.',
     'Fantasia: ' + fantasiados + ' famílias disseram que vão fantasiadas.',
+    'Caixa: os ' + reais(CONFIG.saldoAnterior) + ' que sobraram da Agostina já estão na conta da festa.',
     '',
     'Contribuição pelo Pix até *' + CONFIG.prazoPix + '* pelo link: [link]',
     'Quanto antes confirmar, melhor pra gente comprar na medida. Bora! 🎉'
