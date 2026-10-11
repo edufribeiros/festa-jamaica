@@ -45,21 +45,22 @@ Condomínio Edifício Jamaica · sábado 7/11/2026 · salão A/B · 18h às 23h3
 
 ### Como a pesquisa está montada
 
-- **Uma mensagem de contexto + 6 enquetes do WhatsApp.** Enquete nativa conta sozinha; texto solto no grupo se perde.
-- **Ordem:** tema, preço, fantasia, quantos adultos, quantas crianças, atrações. As três primeiras decidem a festa; as duas seguintes dimensionam a compra; a última prioriza esforço.
-- **Contagem por apartamento.** Nas enquetes de quantidade, pedir uma resposta por apto evita contar a mesma família duas vezes.
-- **Prazo de uma semana** com lembrete no meio. Mais que isso o grupo esquece.
-- **Fixar a mensagem** no grupo (admin: segurar a mensagem › Fixar › 30 dias).
-- **Ao criar cada enquete, desligar "Permitir várias respostas"**, exceto na enquete de atrações.
+- **Opção principal: Google Forms ligado a uma planilha**, criado pelo script `pesquisa-festa-7-11.gs` (seção 2). Dá o dado por apartamento, soma adultos e crianças sozinho e tem aba Resumo pronta. É o mesmo caminho da página de contribuição de agosto, que já gravava em planilha.
+- **Plano B: enquetes nativas do WhatsApp** (seção 3). Menos atrito, mais respostas, mas sem contagem por apartamento.
+- **Ordem das perguntas:** dados, tema, valor, fantasia, quantidades, atrações, voluntários, comentário. As três primeiras decidem a festa; as quantidades dimensionam a compra; o resto prioriza esforço.
+- **Quem marca "Não vou" pula a parte de valor e quantidades** e cai direto no comentário, onde pode dizer o motivo.
+- **Contagem por apartamento.** O formulário pede o número do apto e a aba Resumo aponta apartamentos que responderam mais de uma vez.
+- **Prazo de uma semana** com lembrete no meio. O formulário fecha sozinho na virada de 18 para 19/10.
+- **Fixar a mensagem com o link** no grupo (admin: segurar a mensagem › Fixar › 30 dias).
 
 ### Cronograma sugerido
 
 | Data | Ação |
 |---|---|
-| 12 ou 13/10 (seg/ter) | Pegar orçamento do espetinho, ajustar valor se precisar, postar pesquisa à noite (20h) |
+| 12 ou 13/10 (seg/ter) | Pegar orçamento do espetinho, ajustar `precoComEspetinho` no script se precisar, rodar `criarPesquisa` e postar o link à noite (20h) |
 | 15/10 (qui) | Lembrete |
-| 18/10 (dom) | Fecha a pesquisa |
-| 19/10 (seg) | Anunciar resultado e abrir contribuição pelo Pix (adaptar a página index.html) |
+| 18/10 (dom) | Último dia; o formulário fecha sozinho à meia-noite |
+| 19/10 (seg) | Rodar `textoResultado`, anunciar no grupo e abrir contribuição pelo Pix (adaptar a página index.html) |
 | 31/10 (sáb) | Prazo da contribuição, uma semana antes, como em agosto |
 | 1 a 3/11 | Comprar decoração de Halloween em liquidação (se vencer) |
 | 5 e 6/11 | Compras de comida e bebida |
@@ -67,7 +68,87 @@ Condomínio Edifício Jamaica · sábado 7/11/2026 · salão A/B · 18h às 23h3
 
 ---
 
-## 2. Script para copiar no grupo do WhatsApp
+## 2. Google Forms com planilha (opção principal)
+
+Arquivo: `pesquisa-festa-7-11.gs`. Uma execução cria o formulário, a planilha vinculada, a aba Resumo e agenda o fechamento automático.
+
+### Passo a passo
+
+1. Abra [script.google.com](https://script.google.com) › **Novo projeto**. Apague o conteúdo e cole o arquivo `pesquisa-festa-7-11.gs` inteiro.
+2. Salve (Ctrl+S) e dê um nome ao projeto, por exemplo "Pesquisa Festa 7/11".
+3. Se o orçamento do espetinho mudar o valor, ajuste `precoComEspetinho` no bloco `CONFIG` antes de rodar.
+4. Na barra de cima, escolha a função **criarPesquisa** e clique em **Executar**. Autorize o acesso (Formulários, Planilhas, Drive e acionadores).
+5. Abra **Registro de execução**. Lá estão o link curto do formulário (forms.gle), o link do editor, o link da planilha e a mensagem pronta para o WhatsApp.
+6. Opcional: abra o editor do formulário e troque o tema visual (paleta › cores de Halloween ou coloridas). Não mude a ordem das perguntas.
+7. Poste a mensagem no grupo e fixe.
+8. Acompanhe pela aba **Resumo** da planilha. Na segunda 19/10, rode **textoResultado** e copie o texto do registro.
+
+Rode `criarPesquisa` só uma vez. Se rodar de novo, o script avisa e mostra os links já criados. Para recomeçar do zero, apague as propriedades em Configurações do projeto › Propriedades do script.
+
+### O que o formulário pergunta
+
+| Página | Pergunta | Tipo |
+|---|---|---|
+| 1 | Apartamento | texto, obrigatório |
+| 1 | Nome do morador | texto, obrigatório |
+| 1 | Qual tema você prefere? | escolha única (Halloween, Dia das Crianças, Tanto faz, Não vou) |
+| 2 | Cardápio e valor | escolha única (R$ 40 sem espetinho, R$ 50 com) |
+| 2 | Se for Halloween, iriam fantasiados? | escolha única |
+| 2 | Pessoas de 13+ do apto | número de 0 a 10 |
+| 2 | Crianças de 6 a 12 | número de 0 a 10 |
+| 2 | Crianças de 0 a 5 | número de 0 a 10 |
+| 2 | Atrações que valem a pena | múltipla escolha |
+| 3 | Topa ajudar? | múltipla escolha, opcional |
+| 3 | Comentários | parágrafo, opcional |
+
+Quem marca "Não vou" na página 1 pula a página 2. Crianças ficam separadas em 6 a 12 e 0 a 5 para simular a alternativa de cobrar meia.
+
+### Aba Resumo
+
+Fórmulas automáticas, atualizam a cada resposta:
+
+- respostas recebidas, apartamentos distintos e apartamentos repetidos
+- votos por tema, por valor e por fantasia
+- total de adultos, crianças de 6 a 12, de 0 a 5 e total de pessoas
+- receita estimada a R$ 40, a R$ 50 e a R$ 50 com meia de R$ 20 para 6 a 12
+- votos por atração
+- nome e apartamento de quem topa ajudar, por área
+- lista de comentários
+
+As fórmulas dependem da ordem das colunas da aba Respostas. Se você acrescentar perguntas no formulário depois, faça isso no fim.
+
+### Mensagem para o grupo (o script também gera no registro, já com o link)
+
+```
+🎉 *Festa do Jamaica - sábado 7/11, salão A/B, 18h às 23h30*
+
+Galera, antes de bater o martelo queremos ouvir vocês: *Halloween ou Dia das Crianças?*
+
+Montamos uma pesquisa rapidinha (1 minuto) com tema, valor, fantasia e quantas pessoas do seu apto iriam. É ela que vai definir a festa e as compras.
+
+👉 [link do formulário]
+
+Uma resposta por apartamento, até *domingo 18/10*. Resultado segunda 19/10 aqui no grupo e aí abrimos a contribuição no Pix.
+
+Quem topa ajudar (pintura de rosto, gincana, som, decoração) marca lá na pesquisa! 🙌
+```
+
+### Lembrete (quinta 15/10)
+
+```
+Lembrete: a pesquisa da festa de 7/11 fecha domingo (18/10)! Quem ainda não respondeu, é 1 minuto 👆 [link do formulário]
+Principalmente a parte de quantas pessoas vão, é ela que define as compras. 🙏
+```
+
+### Resultado (segunda 19/10)
+
+Rode `textoResultado` no Apps Script. Ele monta o texto com tema vencedor, valor, contagem de adultos e crianças, número de apartamentos e famílias fantasiadas. Só falta colar o link do Pix.
+
+---
+
+## 3. Plano B: enquetes nativas do WhatsApp (sem planilha)
+
+Use só se o link do Forms tiver pouca adesão ou se preferir não pedir cadastro. Enquete nativa conta sozinha, mas não dá o número por apartamento.
 
 ### Mensagem 1 - contexto (postar primeiro e fixar)
 
