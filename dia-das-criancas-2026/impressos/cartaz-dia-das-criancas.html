@@ -62,8 +62,17 @@
   .criancas span:nth-child(4n+4){ color:var(--cobalt); transform:rotate(4deg) translateY(-4px); }
 
   /* cartões */
-  .info{ margin:40px 70px 0; background:var(--card); border-radius:22px; padding:28px 34px; border:3px solid var(--line); box-shadow:0 8px 0 var(--line); }
+  .info{ position:relative; margin:40px 70px 0; background:var(--card); border-radius:22px; padding:28px 34px; border:3px solid var(--line); box-shadow:0 8px 0 var(--line); }
   .row{ display:flex; gap:22px; align-items:baseline; }
+  /* Selo de adesivo: a fantasia entra sem empurrar o resto do cartaz para baixo. */
+  .selo{ position:absolute; right:24px; top:50%; width:190px; height:190px; margin-top:-95px; border-radius:50%;
+    background:var(--sunflower); border:3px solid var(--line); box-shadow:0 6px 0 var(--line); transform:rotate(9deg);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:var(--ink); }
+  .info .div{ margin-right:200px; }
+  .selo::before{ content:""; position:absolute; inset:8px; border-radius:50%; border:2.5px dashed rgba(255,255,255,.9); }
+  .selo .a{ font-family:'Baloo 2',sans-serif; font-weight:800; font-size:21px; line-height:1; letter-spacing:1px; }
+  .selo .b{ font-family:'Baloo 2',sans-serif; font-weight:800; font-size:29px; line-height:1; margin-top:2px; }
+  .selo .c{ font-size:16px; font-weight:800; line-height:1.15; margin-top:6px; }
   .label{ font-family:'Baloo 2',sans-serif; font-weight:800; font-size:24px; color:var(--tomato); min-width:112px; letter-spacing:1px; }
   .value{ font-size:28px; font-weight:800; color:var(--ink); }
   .value small{ display:block; font-size:21px; font-weight:700; color:var(--ink-2); margin-top:2px; }
@@ -116,6 +125,7 @@
       </div>
 
       <div class="info">
+        <div class="selo"><div class="a">VENHA DE</div><div class="b">FANTASIA!</div><div class="c">concurso para<br>as crianças</div></div>
         <div class="row"><div class="label">QUANDO</div><div class="value">Sábado, 7 de novembro<small>das 16h às 21h</small></div></div>
         <div class="div"></div>
         <div class="row"><div class="label">ONDE</div><div class="value">Salão de Festas Bloco A e B</div></div>
