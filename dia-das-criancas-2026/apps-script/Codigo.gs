@@ -12,6 +12,11 @@ var TOKEN = 'Jamaica-Dia-das-Criancas-2026';
 // Valor por pessoa de 13 anos ou mais. Crianças até 12 não pagam.
 var PRECO_13 = 50;
 
+// Código da planilha de inscrições: o trecho entre /d/ e /edit no endereço dela.
+// Com ele preenchido, o script grava na planilha certa mesmo se tiver sido criado fora dela.
+// Para o ano que vem: troque pelo código da planilha nova.
+var PLANILHA_ID = '1AhB66ETx8jy19UvGOGRkDcbSaA8T1kYc2vJRTJEP-Dg';
+
 var ABA = 'Inscrições';
 var COLUNAS = [
   'Data/Hora', 'Apto', 'Nome', '13+ anos', '6-12 anos', '0-5 anos', 'Crédito Agostina',
@@ -83,9 +88,18 @@ function testar() {
   Logger.log(r.getContent());
 }
 
-function abaInscricoes() {
+function abrirPlanilha() {
+  if (PLANILHA_ID) {
+    try { return SpreadsheetApp.openById(PLANILHA_ID); }
+    catch (e) { throw new Error('planilha-nao-encontrada: confira o PLANILHA_ID no Codigo.gs (' + e.message + ')'); }
+  }
   var planilha = SpreadsheetApp.getActiveSpreadsheet();
-  if (!planilha) throw new Error('script-fora-da-planilha: crie o script pela planilha, em Extensões > Apps Script');
+  if (!planilha) throw new Error('script-fora-da-planilha: preencha o PLANILHA_ID no Codigo.gs');
+  return planilha;
+}
+
+function abaInscricoes() {
+  var planilha = abrirPlanilha();
   var aba = planilha.getSheetByName(ABA);
   if (!aba) aba = planilha.insertSheet(ABA);
   if (aba.getLastRow() === 0) {
