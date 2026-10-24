@@ -203,6 +203,8 @@
   .caixa--sucesso .caixa__titulo { color: #01823a; }
   .caixa--falha { background: #fff4e0; border: 2px solid #c27a00; color: #4a3526; }
   .caixa--falha .caixa__titulo { color: #8a5600; }
+  .falha-detalhe { margin-top: 10px; padding-top: 8px; border-top: 1px dashed #e0b766; font-size: 12px; font-weight: 700; color: #7a5a2a; }
+  .falha-detalhe:empty { display: none; }
   .caixa--info { background: #f3f7ff; border: 2px solid #dbe5f6; color: #3d4566; font-size: 13px; padding: 12px 14px; }
   .caixa--info button { margin-top: 6px; border: none; background: none; padding: 0; font: inherit; font-weight: 800; color: #1f4fd1; text-decoration: underline; cursor: pointer; }
 
@@ -355,6 +357,7 @@
     <div class="caixa caixa--falha oculto" id="caixa-falha" role="alert">
       <div class="caixa__titulo">Não consegui registrar agora</div>
       <div>Sem problema: envie pelo WhatsApp no botão abaixo que a administração registra manualmente.</div>
+      <div class="falha-detalhe" id="falha-detalhe"></div>
     </div>
 
     <button class="botao botao--principal" id="btn-confirmar" type="button">Confirmar inscrição</button>
@@ -579,9 +582,16 @@
       setTimeout(function () { try { controle.abort(); } catch (e) {} }, 15000);
     }
     fetch(CONFIG.endpoint, opcoes)
-      .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json().catch(function () { return { ok: true }; }); })
-      .then(function (r) { if (r && r.ok === false) throw new Error(r.erro || 'recusado'); deuCerto(); })
-      .catch(function () { deuErrado(); });
+      .then(function (r) {
+        if (!r.ok) throw new Error('http ' + r.status);
+        // Se o Google devolver uma página de erro em vez de JSON, nada foi gravado: não pode virar "sucesso".
+        return r.json().catch(function () { throw new Error('resposta-nao-json'); });
+      })
+      .then(function (r) {
+        if (!r || r.ok !== true) throw new Error('servidor: ' + ((r && r.erro) || 'recusado'));
+        deuCerto();
+      })
+      .catch(function (err) { deuErrado(err); });
   }
 
   function deuCerto() {
@@ -596,7 +606,18 @@
     el.caixaSucesso.scrollIntoView({ block: 'center' });
   }
 
-  function deuErrado() {
+  // Traduz a falha num código curto que a administração consegue diagnosticar pelo print.
+  function motivo(err) {
+    var m = String((err && err.message) || err || '');
+    if (err && err.name === 'AbortError') return 'tempo-esgotado: o Google não respondeu em 15 s';
+    if (/^http /.test(m)) return 'Google respondeu ' + m;
+    if (m === 'resposta-nao-json') return 'resposta-nao-json: o script respondeu uma página de erro';
+    if (/^servidor: /.test(m)) return m;
+    return 'sem-acesso: o Google não liberou a resposta (' + (m || 'erro de rede') + ')';
+  }
+
+  function deuErrado(err) {
+    $('falha-detalhe').textContent = 'Detalhe para a administração: ' + motivo(err);
     enviando = false;
     el.btnConfirmar.disabled = false;
     el.btnConfirmar.textContent = 'Tentar de novo';

@@ -74,8 +74,18 @@ function doGet() {
   return resposta({ ok: true, festa: 'Dia das Crianças 2026' });
 }
 
+// Rode esta função pelo editor (botão Executar) para testar sem o portal.
+// Ela grava uma linha "TESTE" na aba Inscrições e mostra o resultado no Registro de execução.
+function testar() {
+  var r = doPost({ postData: { contents: JSON.stringify({
+    token: TOKEN, id: 'teste-' + Date.now(), apto: '999', nome: 'TESTE — pode apagar', c13: 1, valor: PRECO_13
+  }) } });
+  Logger.log(r.getContent());
+}
+
 function abaInscricoes() {
   var planilha = SpreadsheetApp.getActiveSpreadsheet();
+  if (!planilha) throw new Error('script-fora-da-planilha: crie o script pela planilha, em Extensões > Apps Script');
   var aba = planilha.getSheetByName(ABA);
   if (!aba) aba = planilha.insertSheet(ABA);
   if (aba.getLastRow() === 0) {
