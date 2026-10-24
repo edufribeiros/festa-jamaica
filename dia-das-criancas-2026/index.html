@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inscrição — Dia das Crianças | Condomínio Edifício Jamaica</title>
+<meta name="description" content="Inscreva sua família na Festa do Dia das Crianças do Condomínio Edifício Jamaica e pague pelo Pix.">
+<meta name="theme-color" content="#1f4fd1">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Inscrição — Dia das Crianças | Condomínio Edifício Jamaica">
+<meta property="og:description" content="Sábado, 7 de novembro, das 16h às 21h. Diga quem vai, pague pelo Pix e confirme com a administração.">
+<meta property="og:locale" content="pt_BR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Mesmo esqueleto do portal da Festa Agostina (index.html na raiz), com as cores do cartaz
+     do Dia das Crianças. Regra de cor: azul é a festa e a inscrição; verde-água (a cor do Pix)
+     aparece SÓ na parte de pagamento, para o morador nunca confundir uma coisa com a outra. */
+
+  /* ---------- base ---------- */
+  * { box-sizing: border-box; }
+  h1, h2, p { margin: 0; }
+  body {
+    margin: 0;
+    background: #e6f0ff;
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 0 0 40px;
+    -webkit-text-size-adjust: 100%;
+    color: #1c2440;
+  }
+  a { color: #1f4fd1; }
+  .cartao {
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    box-shadow: 0 0 40px rgba(28, 36, 64, 0.12);
+  }
+  .secao { padding: 22px 24px 0; }
+  .secao--larga { padding-top: 24px; }
+  .titulo-secao {
+    font-family: 'Baloo 2', 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #3a56a8;
+  }
+
+  /* ---------- balões ---------- */
+  .baloes { display: flex; justify-content: center; gap: 12px; padding: 12px 8px 0; background: #1f4fd1; }
+  .baloes i {
+    width: 24px; height: 30px; display: block; position: relative;
+    border-radius: 50% 50% 46% 46% / 56% 56% 44% 44%;
+  }
+  .baloes i::after {
+    content: ""; position: absolute; left: 50%; bottom: -4px; width: 6px; height: 5px; margin-left: -3px;
+    background: inherit; clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }
+  .baloes i:nth-child(4n + 1) { background: #e8412f; transform: translateY(4px) rotate(-6deg); }
+  .baloes i:nth-child(4n + 2) { background: #f2ae0c; transform: rotate(5deg); }
+  .baloes i:nth-child(4n + 3) { background: #1c9a55; transform: translateY(3px) rotate(-4deg); }
+  .baloes i:nth-child(4n + 4) { background: #8fb4ff; transform: rotate(6deg); }
+  .rodape-cores { height: 12px; margin-top: 28px; background: linear-gradient(90deg, #e8412f 0 25%, #f2ae0c 25% 50%, #1c9a55 50% 75%, #1f4fd1 75%); }
+
+  /* ---------- cabeçalho ---------- */
+  .cabecalho { background: #1f4fd1; padding: 14px 24px 26px; text-align: center; }
+  .cabecalho__condominio {
+    font-family: 'Baloo 2', 'Nunito', sans-serif;
+    font-weight: 700; font-size: 13px; letter-spacing: 2.5px; text-transform: uppercase;
+    color: #ffd166;
+  }
+  .cabecalho__festa {
+    font-family: 'Baloo 2', 'Nunito', sans-serif;
+    font-weight: 800; font-size: 44px; line-height: 1;
+    color: #ffffff; text-shadow: 3px 3px 0 #0f2a7a;
+    margin-top: 4px;
+  }
+  .cabecalho__data {
+    display: inline-block; margin-top: 12px;
+    background: #ffd166; border-radius: 20px; padding: 5px 18px;
+    font-family: 'Baloo 2', 'Nunito', sans-serif; font-weight: 700; font-size: 16px; color: #0f2a7a;
+  }
+
+  /* ---------- aviso ---------- */
+  .aviso {
+    background: #eef4ff; border-radius: 14px; padding: 14px 16px;
+    font-size: 14px; font-weight: 600; color: #2b3354; line-height: 1.5;
+  }
+
+  /* ---------- formulário ---------- */
+  .rotulo { display: block; margin-top: 14px; font-size: 13px; font-weight: 700; color: #3d4566; }
+  .campo {
+    width: 100%; margin-top: 6px; padding: 13px 14px;
+    font-family: inherit; font-size: 16px; font-weight: 600; color: #1c2440;
+    background: #fff; border: 2px solid #ccd8ee; border-radius: 12px; outline: none;
+  }
+  .campo:focus { border-color: #1f4fd1; }
+
+  /* ---------- faixas etárias ---------- */
+  .faixas { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+  .faixa {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    background: #f3f7ff; border: 2px solid #dbe5f6; border-radius: 14px; padding: 12px 14px;
+  }
+  .faixa--credito { background: #fff; border-style: dashed; }
+  .faixa__nome { font-size: 15px; font-weight: 800; color: #1c2440; }
+  .faixa__preco { font-size: 13px; font-weight: 700; }
+  .faixa__preco--inteira { color: #b42d1c; }
+  .faixa__preco--gratis { color: #157a43; }
+  .faixa__preco--credito { color: #3d4566; }
+  .contador { display: flex; align-items: center; gap: 10px; }
+  .contador button {
+    width: 44px; height: 44px; border-radius: 50%; border: none;
+    font-family: inherit; font-size: 24px; font-weight: 800; line-height: 1;
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .contador button:focus-visible { outline: 3px solid #0f2a7a; outline-offset: 2px; }
+  .contador button:disabled { opacity: .35; cursor: default; }
+  .contador .menos { background: #dce6f7; color: #1f3a8a; }
+  .contador .mais { background: #1f4fd1; color: #fff; }
+  .contador__valor {
+    min-width: 26px; text-align: center;
+    font-family: 'Baloo 2', 'Nunito', sans-serif; font-weight: 800; font-size: 22px; color: #1c2440;
+  }
+
+  /* ---------- total ---------- */
+  .total {
+    margin-top: 16px; background: #1f4fd1; border-radius: 16px; padding: 16px 18px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .total__rotulo { font-size: 13px; font-weight: 700; color: #ffd166; }
+  .total__pessoas { font-size: 12px; font-weight: 600; color: #c9d8ff; margin-top: 2px; }
+  .total__valor { font-family: 'Baloo 2', 'Nunito', sans-serif; font-weight: 800; font-size: 34px; color: #fff; white-space: nowrap; }
+
+  /* ---------- pix (verde-água: só pagamento) ---------- */
+  .pix {
+    margin-top: 14px; border: 2.5px solid #1aa396; border-radius: 18px; padding: 18px;
+    background: #f0fbf9;
+  }
+  .pix__marca { display: flex; align-items: center; gap: 8px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 18px; color: #0b6b62; }
+  .pix__losango { width: 18px; height: 18px; background: #32bcad; transform: rotate(45deg); border-radius: 3px; flex-shrink: 0; }
+  .passos { margin: 12px 0 0; padding-left: 22px; font-size: 14px; font-weight: 600; color: #234642; line-height: 1.55; }
+  .passos b { color: #0b4f48; }
+  .botao--pix {
+    margin-top: 14px; border: none; border-radius: 16px; background: #0e7c72; color: #fff;
+    font-size: 19px; padding: 17px;
+  }
+  .botao--pix:hover { background: #0b665e; }
+  .pix__codigo {
+    margin-top: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: #4d6b67;
+    word-break: break-all; line-height: 1.4; max-height: 3.2em; overflow: hidden;
+  }
+  .pix__recebedor { margin-top: 12px; background: #fff; border: 1.5px solid #bfe7e2; border-radius: 12px; padding: 10px 12px; font-size: 13px; font-weight: 600; color: #234642; line-height: 1.45; }
+  .pix__recebedor b { color: #0b4f48; }
+  .pix__divisor { margin-top: 16px; border-top: 2px dashed #bfe7e2; padding-top: 14px; }
+  .pix__legenda { font-size: 13px; font-weight: 700; color: #3c5c58; }
+  .pix__linha { margin-top: 8px; display: flex; gap: 8px; align-items: stretch; }
+  .pix__chave {
+    flex: 1; background: #fff; border: 1.5px solid #bfe7e2; border-radius: 12px; padding: 12px 10px;
+    font-size: 14px; font-weight: 800; color: #1c2440; word-break: break-all;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pix__copiar {
+    flex-shrink: 0; min-width: 96px; border: none; border-radius: 12px; background: #0e7c72; color: #fff;
+    font-family: 'Baloo 2', 'Nunito', sans-serif; font-weight: 700; font-size: 15px; padding: 0 14px; cursor: pointer;
+  }
+  .pix__copiar:hover { background: #0b665e; }
+  .pix__qrbox { margin-top: 14px; border-top: 2px dashed #bfe7e2; padding-top: 12px; }
+  .pix__qrbox summary { cursor: pointer; font-size: 14px; font-weight: 800; color: #0b6b62; list-style: none; }
+  .pix__qrbox summary::-webkit-details-marker { display: none; }
+  .pix__qrbox summary::after { content: "  ▾"; }
+  .pix__qrbox[open] summary::after { content: "  ▴"; }
+  .pix__qrmoldura { margin: 12px auto 0; width: 236px; max-width: 100%; border: 4px solid #32bcad; border-radius: 16px; padding: 10px; background: #fff; text-align: center; }
+  .pix__qrmoldura .selo { font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 13px; letter-spacing: 1px; color: #0b6b62; }
+  #pix-qr svg { width: 200px; height: 200px; display: block; margin: 6px auto 0; }
+  .nada-a-pagar { margin-top: 14px; border: 2px solid #1c9a55; background: #eaf7ee; border-radius: 16px; padding: 16px 18px; font-size: 15px; font-weight: 700; color: #1d4a2e; }
+
+  /* ---------- confirmação ---------- */
+  .explicacao { margin-top: 8px; font-size: 14px; font-weight: 600; color: #3d4566; line-height: 1.5; }
+  .botao { display: block; width: 100%; font-family: 'Baloo 2', 'Nunito', sans-serif; font-weight: 700; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .botao--whatsapp { margin-top: 14px; border: none; border-radius: 16px; background: #25984d; color: #fff; font-size: 19px; padding: 17px; }
+  .botao--whatsapp:hover { background: #01823a; }
+  .botao--contorno { margin-top: 10px; border: 2px solid #1f4fd1; border-radius: 16px; background: #fff; color: #1f4fd1; font-size: 17px; padding: 15px; }
+  .botao--contorno:hover { background: #eef4ff; }
+  .botao--principal { margin-top: 14px; border: none; border-radius: 16px; background: #1f4fd1; color: #fff; font-size: 19px; padding: 17px; }
+  .botao--principal:hover { background: #1a43b3; }
+  .botao[disabled] { opacity: 0.65; cursor: default; }
+  .botao:focus-visible, .pix__copiar:focus-visible, .pix__qrbox summary:focus-visible { outline: 3px solid #0f2a7a; outline-offset: 2px; }
+  .nota { margin-top: 10px; font-size: 12.5px; font-weight: 600; color: #6b7392; text-align: center; }
+
+  /* ---------- avisos ---------- */
+  .oculto { display: none !important; }
+  .erro { margin-top: 6px; font-size: 13px; font-weight: 700; color: #b42d1c; }
+  .campo--erro { border-color: #b42d1c; }
+  .caixa { margin-top: 14px; border-radius: 16px; padding: 16px 18px; font-size: 14px; font-weight: 600; line-height: 1.5; }
+  .caixa__titulo { font-family: 'Baloo 2', 'Nunito', sans-serif; font-weight: 800; font-size: 19px; margin-bottom: 4px; }
+  .caixa--sucesso { background: #eaf7ee; border: 2px solid #25984d; color: #2b4133; }
+  .caixa--sucesso .caixa__titulo { color: #01823a; }
+  .caixa--falha { background: #fff4e0; border: 2px solid #c27a00; color: #4a3526; }
+  .caixa--falha .caixa__titulo { color: #8a5600; }
+  .caixa--info { background: #f3f7ff; border: 2px solid #dbe5f6; color: #3d4566; font-size: 13px; padding: 12px 14px; }
+  .caixa--info button { margin-top: 6px; border: none; background: none; padding: 0; font: inherit; font-weight: 800; color: #1f4fd1; text-decoration: underline; cursor: pointer; }
+
+  @media (max-width: 399px) { .pix__linha { flex-direction: column; } }
+  @media (max-width: 359px) { .cabecalho__festa { font-size: 38px; } .total__valor { font-size: 30px; } }
+</style>
+</head>
+<body>
+
+<main class="cartao">
+
+  <div class="baloes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+  <header class="cabecalho">
+    <div class="cabecalho__condominio">Condomínio Edifício Jamaica</div>
+    <h1 class="cabecalho__festa">Dia das Crianças</h1>
+    <div class="cabecalho__data">Sábado, 7/11 · 16h às 21h</div>
+  </header>
+
+  <div class="secao">
+    <p class="aviso">Inscreva sua família e pague até <strong>31/10</strong> para darmos tempo às compras. <strong>Crianças até 12 anos não pagam</strong> — mas inscreva todas, para a comida dar para todo mundo.</p>
+  </div>
+
+  <section class="secao">
+    <h2 class="titulo-secao">1 · Seus dados</h2>
+
+    <label class="rotulo" for="apto">Apartamento</label>
+    <input class="campo" id="apto" type="text" inputmode="numeric" autocomplete="off" placeholder="Ex.: 302">
+    <div class="erro oculto" id="erro-apto" role="alert">Preencha o número do apartamento.</div>
+
+    <label class="rotulo" for="nome">Nome do morador</label>
+    <input class="campo" id="nome" type="text" autocomplete="name" placeholder="Seu nome completo">
+    <div class="erro oculto" id="erro-nome" role="alert">Preencha o nome de quem está se inscrevendo.</div>
+  </section>
+
+  <section class="secao secao--larga">
+    <h2 class="titulo-secao">2 · Quem vai</h2>
+
+    <div class="faixas">
+      <div class="faixa">
+        <div>
+          <div class="faixa__nome">13 anos ou mais</div>
+          <div class="faixa__preco faixa__preco--inteira" id="preco-c13">R$ 50 por pessoa</div>
+        </div>
+        <div class="contador">
+          <button class="menos" type="button" data-faixa="c13" data-passo="-1" aria-label="Remover uma pessoa de 13 anos ou mais">−</button>
+          <div class="contador__valor" id="valor-c13" aria-live="polite">0</div>
+          <button class="mais" type="button" data-faixa="c13" data-passo="1" aria-label="Adicionar uma pessoa de 13 anos ou mais">+</button>
+        </div>
+      </div>
+
+      <div class="faixa">
+        <div>
+          <div class="faixa__nome">6 a 12 anos</div>
+          <div class="faixa__preco faixa__preco--gratis">Não paga</div>
+        </div>
+        <div class="contador">
+          <button class="menos" type="button" data-faixa="c6" data-passo="-1" aria-label="Remover uma criança de 6 a 12 anos">−</button>
+          <div class="contador__valor" id="valor-c6" aria-live="polite">0</div>
+          <button class="mais" type="button" data-faixa="c6" data-passo="1" aria-label="Adicionar uma criança de 6 a 12 anos">+</button>
+        </div>
+      </div>
+
+      <div class="faixa">
+        <div>
+          <div class="faixa__nome">0 a 5 anos</div>
+          <div class="faixa__preco faixa__preco--gratis">Não paga</div>
+        </div>
+        <div class="contador">
+          <button class="menos" type="button" data-faixa="c0" data-passo="-1" aria-label="Remover uma criança de 0 a 5 anos">−</button>
+          <div class="contador__valor" id="valor-c0" aria-live="polite">0</div>
+          <button class="mais" type="button" data-faixa="c0" data-passo="1" aria-label="Adicionar uma criança de 0 a 5 anos">+</button>
+        </div>
+      </div>
+
+      <div class="faixa faixa--credito">
+        <div>
+          <div class="faixa__nome">Pagou a Agostina e não foi?</div>
+          <div class="faixa__preco faixa__preco--credito">Dessas pessoas de 13+, quantas têm crédito</div>
+        </div>
+        <div class="contador">
+          <button class="menos" type="button" data-faixa="cred" data-passo="-1" aria-label="Remover uma pessoa com crédito da Festa Agostina">−</button>
+          <div class="contador__valor" id="valor-cred" aria-live="polite">0</div>
+          <button class="mais" type="button" data-faixa="cred" data-passo="1" aria-label="Adicionar uma pessoa com crédito da Festa Agostina">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="total">
+      <div>
+        <div class="total__rotulo">Total a pagar</div>
+        <div class="total__pessoas" id="resumo-pessoas">Selecione as pessoas</div>
+      </div>
+      <div class="total__valor" id="total-valor" aria-live="polite">R$ 0</div>
+    </div>
+    <div class="erro oculto" id="erro-pessoas" role="alert">Informe quantas pessoas vão à festa.</div>
+  </section>
+
+  <section class="secao secao--larga" id="secao-pix">
+    <h2 class="titulo-secao">3 · Pague pelo Pix</h2>
+
+    <div class="nada-a-pagar oculto" id="nada-a-pagar">Nada a pagar 🎉 Só confirme a inscrição no passo 4.</div>
+
+    <div class="pix" id="bloco-pix">
+      <div class="pix__marca"><span class="pix__losango" aria-hidden="true"></span>Pagamento Pix</div>
+      <ol class="passos">
+        <li>Toque em <b>Copiar código Pix</b> aqui embaixo.</li>
+        <li>Abra o <b>app do seu banco</b> → Pix → <b>Pix Copia e Cola</b>.</li>
+        <li>Cole. O valor já vem preenchido: confira e pague.</li>
+      </ol>
+
+      <button class="botao botao--pix" id="btn-copiar-pix" type="button">Copiar código Pix</button>
+      <div class="pix__codigo" id="pix-codigo" aria-hidden="true"></div>
+
+      <div class="pix__recebedor">No banco vai aparecer: <b id="pix-recebedor"></b> — é o condomínio, pode pagar tranquilo.</div>
+
+      <div class="pix__divisor">
+        <div class="pix__legenda">Seu banco não tem Copia e Cola? Use a chave Pix (e-mail) e digite o valor:</div>
+        <div class="pix__linha">
+          <div class="pix__chave" id="chave-pix"></div>
+          <button class="pix__copiar" id="btn-copiar-chave" type="button">Copiar</button>
+        </div>
+      </div>
+
+      <details class="pix__qrbox" id="qrbox">
+        <summary>Está no computador? Mostrar QR Code de pagamento</summary>
+        <div class="pix__qrmoldura">
+          <div class="selo">QR DE PAGAMENTO · PIX</div>
+          <div id="pix-qr" role="img" aria-label="QR Code Pix de pagamento com o valor da inscrição"></div>
+          <div class="pix__legenda" style="margin-top:6px;">Leia pelo app do banco, em outro celular</div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section class="secao secao--larga">
+    <h2 class="titulo-secao">4 · Confirme sua inscrição</h2>
+    <p class="explicacao">Depois de pagar, confirme aqui. Só a administração recebe a lista — nenhum morador vê os dados dos outros.</p>
+
+    <div class="caixa caixa--info oculto" id="ja-confirmou" role="status">
+      <span id="ja-confirmou-texto"></span>
+      <button type="button" id="btn-nova-confirmacao">Fazer uma nova inscrição</button>
+    </div>
+
+    <div class="caixa caixa--sucesso oculto" id="caixa-sucesso" role="status">
+      <div class="caixa__titulo">Inscrição registrada!</div>
+      <div id="sucesso-texto"></div>
+    </div>
+
+    <div class="caixa caixa--falha oculto" id="caixa-falha" role="alert">
+      <div class="caixa__titulo">Não consegui registrar agora</div>
+      <div>Sem problema: envie pelo WhatsApp no botão abaixo que a administração registra manualmente.</div>
+    </div>
+
+    <button class="botao botao--principal" id="btn-confirmar" type="button">Confirmar inscrição</button>
+    <button class="botao botao--whatsapp oculto" id="btn-whatsapp" type="button">Enviar inscrição no WhatsApp</button>
+    <button class="botao botao--contorno" id="btn-copiar-resumo" type="button">Copiar resumo dos dados</button>
+
+    <p class="nota" id="nota-contato">Seus dados vão direto para a administração do condomínio.</p>
+  </section>
+
+  <div class="rodape-cores" aria-hidden="true"></div>
+
+</main>
+
+<script src="qrcode.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* =======================================================================
+     CONFIGURAÇÃO — ajuste apenas esta parte
+     ======================================================================= */
+  var CONFIG = {
+    // Endereço do app da web do Apps Script desta festa (termina em /exec).
+    // Crie um NOVO, a partir de apps-script/Codigo.gs, para não misturar com a Agostina.
+    // Enquanto estiver vazio, a página funciona só com o botão do WhatsApp.
+    endpoint: '',
+
+    // Precisa ser exatamente igual ao TOKEN do apps-script/Codigo.gs.
+    token: 'Jamaica-Dia-das-Criancas-2026',
+
+    // WhatsApp da administração, só números, com 55 + DDD (o mesmo da Agostina).
+    whatsappNumber: '5521998831959',
+
+    // Dados do Pix. Iguais aos do QR Code da Agostina, que já foi pago por dezenas de moradores.
+    chavePix: 'ed.jamaica@outlook.com',
+    pixRecebedor: 'CONDOMINIO DO EDIFICIO JA', // máximo 25 caracteres, sem acento
+    pixCidade: 'RIO DE JANEIRO',               // máximo 15 caracteres, sem acento
+    pixPrefixoId: 'CRIANCAS',                  // aparece no extrato como identificador + apto
+
+    // Valor por faixa etária, em reais.
+    precos: { c13: 50, c6: 0, c0: 0 },
+
+    prefixoId: 'dc-',
+    tituloMensagem: 'Dia das Crianças — Condomínio Edifício Jamaica'
+  };
+  /* ===================================================================== */
+
+  var estado = { c13: 0, c6: 0, c0: 0, cred: 0 };
+  var whats = String(CONFIG.whatsappNumber || '').replace(/\D/g, '');
+  var registraNaLista = !!String(CONFIG.endpoint || '').trim();
+  var enviando = false;
+  var idEnvio = null;
+  var CHAVE_MEMORIA = 'festa-dia-das-criancas-2026';
+
+  function $(id) { return document.getElementById(id); }
+  var el = {
+    apto: $('apto'), nome: $('nome'),
+    totalValor: $('total-valor'), resumoPessoas: $('resumo-pessoas'),
+    blocoPix: $('bloco-pix'), nadaAPagar: $('nada-a-pagar'),
+    chavePix: $('chave-pix'), pixCodigo: $('pix-codigo'), pixRecebedor: $('pix-recebedor'), pixQr: $('pix-qr'), qrbox: $('qrbox'),
+    btnCopiarPix: $('btn-copiar-pix'), btnCopiarChave: $('btn-copiar-chave'), btnCopiarResumo: $('btn-copiar-resumo'),
+    btnConfirmar: $('btn-confirmar'), btnWhatsApp: $('btn-whatsapp'), notaContato: $('nota-contato'),
+    erroApto: $('erro-apto'), erroNome: $('erro-nome'), erroPessoas: $('erro-pessoas'),
+    caixaSucesso: $('caixa-sucesso'), sucessoTexto: $('sucesso-texto'), caixaFalha: $('caixa-falha'),
+    jaConfirmou: $('ja-confirmou'), jaConfirmouTexto: $('ja-confirmou-texto'), btnNovaConfirmacao: $('btn-nova-confirmacao')
+  };
+
+  el.chavePix.textContent = CONFIG.chavePix;
+  el.pixRecebedor.textContent = CONFIG.pixRecebedor;
+  $('preco-c13').textContent = 'R$ ' + CONFIG.precos.c13 + ' por pessoa';
+
+  function mostrar(no, visivel) { no.classList[visivel ? 'remove' : 'add']('oculto'); }
+
+  if (!registraNaLista) {
+    mostrar(el.btnConfirmar, false);
+    mostrar(el.btnWhatsApp, true);
+    el.notaContato.textContent = whats ? 'Envio direto para a administração do condomínio.' : 'Envie o resumo e o comprovante para a administração do condomínio.';
+  }
+
+  function pagantes() { return Math.max(0, estado.c13 - estado.cred); }
+  function total() { return pagantes() * CONFIG.precos.c13 + estado.c6 * CONFIG.precos.c6 + estado.c0 * CONFIG.precos.c0; }
+  function reais(v) { return 'R$ ' + v.toFixed(2).replace('.', ','); }
+
+  /* ---------------- Pix (padrão BR Code do Banco Central) ---------------- */
+
+  function semAcento(s) { return String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\x20-\x7E]/g, ''); }
+  function tlv(id, valor) { var v = String(valor); return id + (v.length < 10 ? '0' : '') + v.length + v; }
+  function crc16(texto) {
+    var crc = 0xFFFF;
+    for (var i = 0; i < texto.length; i++) {
+      crc ^= texto.charCodeAt(i) << 8;
+      for (var b = 0; b < 8; b++) crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) & 0xFFFF : (crc << 1) & 0xFFFF;
+    }
+    return ('000' + crc.toString(16).toUpperCase()).slice(-4);
+  }
+  function identificador() {
+    var apto = String(el.apto.value).replace(/\D/g, '').slice(0, 6);
+    return (CONFIG.pixPrefixoId + (apto ? 'APT' + apto : '')).replace(/[^A-Za-z0-9]/g, '').slice(0, 25) || '***';
+  }
+  // Mesmo formato do QR da Agostina (validado pelo CRC), agora com o campo 54 = valor.
+  function codigoPix(valor) {
+    var corpo = tlv('00', '01') +
+      tlv('26', tlv('00', 'br.gov.bcb.pix') + tlv('01', CONFIG.chavePix)) +
+      tlv('52', '0000') + tlv('53', '986') +
+      (valor > 0 ? tlv('54', valor.toFixed(2)) : '') +
+      tlv('58', 'BR') +
+      tlv('59', semAcento(CONFIG.pixRecebedor).slice(0, 25)) +
+      tlv('60', semAcento(CONFIG.pixCidade).slice(0, 15)) +
+      tlv('62', tlv('05', identificador())) +
+      '6304';
+    return corpo + crc16(corpo);
+  }
+
+  function pintarPix() {
+    var valor = total();
+    var pagar = valor > 0;
+    mostrar(el.blocoPix, pagar);
+    mostrar(el.nadaAPagar, !pagar && (estado.c13 + estado.c6 + estado.c0) > 0);
+    if (!pagar) return;
+    var codigo = codigoPix(valor);
+    el.pixCodigo.textContent = codigo;
+    el.btnCopiarPix.textContent = 'Copiar código Pix · ' + reais(valor);
+    if (el.qrbox.open) desenharQr(codigo);
+  }
+
+  function desenharQr(codigo) {
+    if (typeof qrcode !== 'function') { el.pixQr.textContent = 'Use o código Copia e Cola acima.'; return; }
+    var qr = qrcode(0, 'M');
+    qr.addData(codigo);
+    qr.make();
+    el.pixQr.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+  }
+
+  /* ---------------- tela ---------------- */
+
+  function pintar() {
+    if (estado.cred > estado.c13) estado.cred = estado.c13;
+    ['c13', 'c6', 'c0', 'cred'].forEach(function (k) { $('valor-' + k).textContent = estado[k]; });
+    document.querySelector('[data-faixa="cred"][data-passo="1"]').disabled = estado.cred >= estado.c13;
+    var pessoas = estado.c13 + estado.c6 + estado.c0;
+    el.totalValor.textContent = reais(total()).replace(',00', '');
+    var partes = [];
+    if (pessoas) partes.push(pessoas + (pessoas === 1 ? ' pessoa' : ' pessoas'));
+    if (estado.cred) partes.push(estado.cred + ' com crédito');
+    el.resumoPessoas.textContent = partes.length ? partes.join(' · ') : 'Selecione as pessoas';
+    pintarPix();
+  }
+
+  function resumoTexto() {
+    var partes = [];
+    if (estado.c13) partes.push(estado.c13 + ' de 13+ anos');
+    if (estado.c6) partes.push(estado.c6 + ' de 6-12 anos');
+    if (estado.c0) partes.push(estado.c0 + ' de 0-5 anos');
+    return [
+      CONFIG.tituloMensagem,
+      'Apto: ' + (el.apto.value.trim() || '—'),
+      'Nome: ' + (el.nome.value.trim() || '—'),
+      'Pessoas: ' + (partes.length ? partes.join(', ') : '—'),
+      estado.cred ? 'Crédito da Agostina: ' + estado.cred + ' pessoa(s)' : null,
+      'Valor: ' + reais(total())
+    ].filter(Boolean).join('\n');
+  }
+
+  function avisar(botao, texto) {
+    var original = botao.getAttribute('data-texto-original') || botao.textContent;
+    botao.setAttribute('data-texto-original', original);
+    botao.textContent = texto;
+    clearTimeout(botao._t);
+    botao._t = setTimeout(function () { botao.removeAttribute('data-texto-original'); botao.textContent = original; pintarPix(); }, 2200);
+  }
+  function copiar(texto, botao, aviso) {
+    var pronto = function () { avisar(botao, aviso); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(texto).then(pronto, function () { copiarLegado(texto, pronto); });
+    else copiarLegado(texto, pronto);
+  }
+  function copiarLegado(texto, pronto) {
+    var ta = document.createElement('textarea');
+    ta.value = texto; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, texto.length);
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta); pronto();
+  }
+
+  /* ---------------- validação ---------------- */
+
+  function validar() {
+    var apto = el.apto.value.trim(), nome = el.nome.value.trim();
+    var pessoas = estado.c13 + estado.c6 + estado.c0;
+    mostrar(el.erroApto, !apto); el.apto.classList[apto ? 'remove' : 'add']('campo--erro');
+    mostrar(el.erroNome, !nome); el.nome.classList[nome ? 'remove' : 'add']('campo--erro');
+    mostrar(el.erroPessoas, pessoas < 1);
+    var primeiro = !apto ? el.apto : (!nome ? el.nome : null);
+    if (primeiro) { primeiro.focus(); primeiro.scrollIntoView({ block: 'center' }); return false; }
+    if (pessoas < 1) { el.erroPessoas.scrollIntoView({ block: 'center' }); return false; }
+    return true;
+  }
+
+  /* ---------------- envio para a lista da administração ---------------- */
+
+  function novoId() { return CONFIG.prefixoId + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10); }
+
+  function enviarParaLista() {
+    if (enviando || !validar()) return;
+    enviando = true;
+    if (!idEnvio) idEnvio = novoId();
+    mostrar(el.caixaFalha, false);
+    el.btnConfirmar.disabled = true;
+    el.btnConfirmar.textContent = 'Enviando…';
+
+    var dados = {
+      token: CONFIG.token, id: idEnvio,
+      apto: el.apto.value.trim(), nome: el.nome.value.trim(),
+      c13: estado.c13, c6: estado.c6, c0: estado.c0, cred: estado.cred,
+      valor: total(), pix: identificador()
+    };
+
+    // Corpo em texto puro: requisição "simples", sem preflight de CORS (funciona no Safari do iPhone).
+    var opcoes = { method: 'POST', body: JSON.stringify(dados), redirect: 'follow' };
+    if (typeof AbortController === 'function') {
+      var controle = new AbortController();
+      opcoes.signal = controle.signal;
+      setTimeout(function () { try { controle.abort(); } catch (e) {} }, 15000);
+    }
+    fetch(CONFIG.endpoint, opcoes)
+      .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json().catch(function () { return { ok: true }; }); })
+      .then(function (r) { if (r && r.ok === false) throw new Error(r.erro || 'recusado'); deuCerto(); })
+      .catch(function () { deuErrado(); });
+  }
+
+  function deuCerto() {
+    enviando = false;
+    var pessoas = estado.c13 + estado.c6 + estado.c0;
+    var registro = { apto: el.apto.value.trim(), nome: el.nome.value.trim(), valor: total(), pessoas: pessoas, quando: new Date().toISOString(), id: idEnvio };
+    guardar(registro);
+    el.sucessoTexto.textContent = 'Apto ' + registro.apto + ' · ' + pessoas + (pessoas === 1 ? ' pessoa' : ' pessoas') + ' · ' + reais(registro.valor) +
+      '. A administração já recebeu seus dados e vai conferir com o extrato. Se quiser, mande também o comprovante pelo WhatsApp.';
+    mostrar(el.caixaSucesso, true); mostrar(el.caixaFalha, false); mostrar(el.btnConfirmar, false); mostrar(el.btnWhatsApp, true);
+    el.btnWhatsApp.textContent = 'Enviar comprovante no WhatsApp';
+    el.caixaSucesso.scrollIntoView({ block: 'center' });
+  }
+
+  function deuErrado() {
+    enviando = false;
+    el.btnConfirmar.disabled = false;
+    el.btnConfirmar.textContent = 'Tentar de novo';
+    mostrar(el.caixaFalha, true); mostrar(el.btnWhatsApp, true);
+    el.btnWhatsApp.textContent = 'Enviar inscrição no WhatsApp';
+    el.caixaFalha.scrollIntoView({ block: 'center' });
+  }
+
+  /* ---------------- memória no aparelho do morador ---------------- */
+
+  function guardar(registro) { try { localStorage.setItem(CHAVE_MEMORIA, JSON.stringify(registro)); } catch (e) {} }
+  function lembrar() {
+    var r;
+    try { r = JSON.parse(localStorage.getItem(CHAVE_MEMORIA) || 'null'); } catch (e) { return; }
+    if (!r || !r.apto) return;
+    var d = new Date(r.quando);
+    var quando = isNaN(d.getTime()) ? '' : ' em ' + d.toLocaleDateString('pt-BR') + ' às ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    el.jaConfirmouTexto.textContent = 'Este aparelho já registrou a inscrição do apto ' + r.apto + ' (' + reais(r.valor) + ')' + quando + '.';
+    mostrar(el.jaConfirmou, true); mostrar(el.btnConfirmar, false); mostrar(el.btnWhatsApp, true);
+    el.btnWhatsApp.textContent = 'Enviar comprovante no WhatsApp';
+  }
+
+  /* ---------------- ligações ---------------- */
+
+  Array.prototype.forEach.call(document.querySelectorAll('.contador button'), function (botao) {
+    botao.addEventListener('click', function () {
+      var k = botao.getAttribute('data-faixa');
+      estado[k] = Math.max(0, estado[k] + parseInt(botao.getAttribute('data-passo'), 10));
+      mostrar(el.erroPessoas, false);
+      pintar();
+    });
+  });
+  el.apto.addEventListener('input', function () { mostrar(el.erroApto, false); el.apto.classList.remove('campo--erro'); pintarPix(); });
+  el.nome.addEventListener('input', function () { mostrar(el.erroNome, false); el.nome.classList.remove('campo--erro'); });
+  el.qrbox.addEventListener('toggle', function () { if (el.qrbox.open) desenharQr(codigoPix(total())); });
+
+  el.btnCopiarPix.addEventListener('click', function () {
+    if (!el.apto.value.trim()) { mostrar(el.erroApto, true); el.apto.classList.add('campo--erro'); el.apto.focus(); el.apto.scrollIntoView({ block: 'center' }); return; }
+    copiar(codigoPix(total()), el.btnCopiarPix, 'Copiado! Agora cole no app do banco');
+  });
+  el.btnCopiarChave.addEventListener('click', function () { copiar(CONFIG.chavePix, el.btnCopiarChave, 'Copiado!'); });
+  el.btnCopiarResumo.addEventListener('click', function () { copiar(resumoTexto(), el.btnCopiarResumo, 'Resumo copiado!'); });
+  el.btnConfirmar.addEventListener('click', enviarParaLista);
+  el.btnNovaConfirmacao.addEventListener('click', function () {
+    idEnvio = null;
+    try { localStorage.removeItem(CHAVE_MEMORIA); } catch (e) {}
+    mostrar(el.jaConfirmou, false); mostrar(el.caixaSucesso, false);
+    if (registraNaLista) { mostrar(el.btnConfirmar, true); mostrar(el.btnWhatsApp, false); el.btnConfirmar.disabled = false; el.btnConfirmar.textContent = 'Confirmar inscrição'; }
+  });
+  el.btnWhatsApp.addEventListener('click', function () {
+    var msg = encodeURIComponent(resumoTexto());
+    var url = whats ? 'https://wa.me/' + whats + '?text=' + msg : 'https://wa.me/?text=' + msg;
+    var aba = window.open(url, '_blank');
+    if (!aba) window.location.href = url;
+  });
+
+  pintar();
+  if (registraNaLista) lembrar();
+})();
+</script>
+
+</body>
+</html>
