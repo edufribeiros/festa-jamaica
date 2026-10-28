@@ -13,9 +13,16 @@ um Apps Script novo.
 | `index.html` | Página do morador: dados, quem vai, Pix com o valor já preenchido, confirmação |
 | `qrcode.js` | Biblioteca que desenha o QR do Pix na tela (qrcode-generator, Kazuhiko Arase, licença MIT) |
 | `apps-script/Codigo.gs` | Recebe as inscrições e grava na planilha |
-| `impressos/cartaz-dia-das-criancas.pdf` | Cartaz do grupo e do mural. Um QR só: o da inscrição |
-| `impressos/cartao-pix-livro.pdf` | Folha para o livro de inscrição presencial. Um QR só: o do Pix (sem valor; o morador digita) |
-| `impressos/*.html` | Fonte dos dois PDFs, para editar no ano que vem (abrir no Chrome → Imprimir → Salvar como PDF) |
+| `impressos/cartaz-dia-das-criancas.pdf` | Cartaz do grupo do WhatsApp. Um QR só: o da inscrição online |
+| `impressos/cartaz-mural-sem-qr.pdf` | Cartaz do mural, ao lado da lista: sem QR, manda assinar a lista |
+| `impressos/lista-inscricao-presencial.pdf` | Lista de assinatura para quem se inscreve no papel (A4 deitado, 14 linhas por folha) |
+| `impressos/cartao-pix-livro.pdf` | Folha Pix que fica junto da lista. Um QR só: o do Pix (sem valor; o morador digita) |
+| `impressos/*.html` | Fonte dos PDFs, para editar no ano que vem (abrir no Chrome → Imprimir → Salvar como PDF) |
+
+Todos os PDFs saem em A4 (210 × 297 mm); a lista, em A4 deitado. Ao imprimir, use "Tamanho real" (100%).
+
+A lista tem as mesmas colunas da aba Inscrições da planilha, mais "Pagou em" e "Recebido por",
+que controlam o dinheiro em espécie. Ao lançar uma linha da lista na planilha, use "Lista" no campo ID.
 
 ## Publicar a planilha de inscrições (uma vez)
 
