@@ -16,6 +16,7 @@ um Apps Script novo.
 | `impressos/cartaz-dia-das-criancas.pdf` | Cartaz do grupo do WhatsApp. Um QR só: o da inscrição online |
 | `impressos/cartaz-mural-sem-qr.pdf` | Cartaz do mural, ao lado da lista: sem QR, manda assinar a lista |
 | `impressos/lista-inscricao-presencial.pdf` | Lista de assinatura para quem se inscreve no papel (A4 deitado, 14 linhas por folha) |
+| `impressos/lista-de-compras.pdf` | Lista de compras de comida, bebida e descartáveis, sem quantidades (A4, para marcar à caneta) |
 | `impressos/cartao-pix-livro.pdf` | Folha Pix que fica junto da lista. Um QR só: o do Pix (sem valor; o morador digita) |
 | `impressos/*.html` | Fonte dos PDFs, para editar no ano que vem (abrir no Chrome → Imprimir → Salvar como PDF) |
 
